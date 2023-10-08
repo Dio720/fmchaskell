@@ -1,7 +1,7 @@
 module Nat where
 
 import Prelude
-  hiding ((+), (*), (^), (-), (<), (>), (++), quot, min, gcd, lcm, div, max, pred, rem, length, elem, sum, product, reverse)
+  hiding ((+), (*), (^), (-), (<), (>), (++), quot, min, gcd, lcm, div, max, pred, rem, length, elem, sum, product, reverse, enumFromTo, enumTo)
 import Distribution.CabalSpecVersion (HasCommonStanzas(NoCommonStanzas))
 import Data.Sequence (ViewR(EmptyR))
 
@@ -104,6 +104,11 @@ od O = False
 od (S O) = True
 od (S (S n)) = od n
 
+-- IsZero --
+isZero :: Nat -> Bool
+isZero O = True
+isZero _ = False
+
 -- LISTAS --
 
 -- Length --
@@ -146,3 +151,37 @@ reverse (Cons n ns) = reverse ns ++ Cons n Empty
 allEven :: ListNat -> Bool
 allEven Empty = True
 allEven (Cons n ns) = ev n && allEven ns
+
+-- Any zero --
+anyZero :: ListNat -> Bool
+anyZero Empty = False
+anyZero (Cons n ns) = isZero n || anyZero ns
+
+-- Add Nat --
+addNat :: Nat -> ListNat -> ListNat
+addNat _ Empty = Empty
+addNat n (Cons m ns) = Cons (n + m) (addNat n ns)
+
+-- Mul Nat --
+multNat :: Nat -> ListNat -> ListNat
+multNat _ Empty = Empty
+multNat n (Cons m ns) = Cons (n * m) (multNat n ns)
+
+-- Exp Nat --
+expNat :: Nat -> ListNat -> ListNat
+expNat _ Empty = Empty
+expNat n (Cons m ns) = Cons (n ^ m) (expNat n ns)
+
+-- Enum From To --
+enumFromTo :: Nat -> Nat -> ListNat
+enumFromTo n m
+  | n < m     = Cons n (enumFromTo (S n) m)
+  | n == m    = Cons m Empty
+  | otherwise = Empty
+
+-- Enum To --
+enumTo :: Nat -> ListNat
+enumTo = enumFromTo O
+
+-- take --
+take :: Nat -> ListNat
