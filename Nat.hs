@@ -1,7 +1,8 @@
 module Nat where
 
 import Prelude
-  hiding ((+), (*), (^), (-), (<), (>), (++), quot, min, gcd, lcm, div, max, pred, rem, length, elem, sum, product, reverse, enumFromTo, enumTo)
+  hiding ((+), (*), (^), (-), (<), (>), (++), quot, min, gcd, lcm, div, max, pred, rem,
+  length, elem, sum, product, reverse, enumFromTo, enumTo, take, drop, init, last, minimum, maximum)
 import Distribution.CabalSpecVersion (HasCommonStanzas(NoCommonStanzas))
 import Data.Sequence (ViewR(EmptyR))
 
@@ -11,6 +12,8 @@ data Nat = O | S Nat
 
 data ListNat = Empty | Cons Nat ListNat
     deriving( Eq, Show)
+
+--type ListNat = [Nat]
 
 -- Predecessor --
 pred :: Nat -> Nat
@@ -184,4 +187,52 @@ enumTo :: Nat -> ListNat
 enumTo = enumFromTo O
 
 -- take --
-take :: Nat -> ListNat
+take :: Nat -> ListNat -> ListNat
+take (S m) (Cons n ns) = Cons n (take m ns)
+take _ _ = Empty
+
+-- drop --
+drop :: Nat -> ListNat -> ListNat
+drop O n = n
+drop (S m) (Cons n ns) = drop m ns
+
+
+-- elemIndices --
+elemIndices :: Nat -> ListNat -> ListNat
+elemIndices _ Empty = Empty
+elemIndices m (Cons n ns)
+  | n == m    = Cons O (addNat (S O) (elemIndices m ns))
+  | otherwise = addNat (S O) (elemIndices m ns)
+
+-- pwAdd --
+
+-- minimum --
+minimum :: ListNat -> Nat
+minimum (Cons n Empty) = n
+minimum (Cons n ns) = min n (minimum ns)
+
+-- Maximum --
+maximum :: ListNat -> Nat
+maximum (Cons n Empty) = n
+maximum (Cons n ns) = max n (maximum ns)
+
+
+-- Head --
+head :: ListNat -> Nat
+head Empty = undefined
+head (Cons n ns) = n
+
+-- Tail --
+tail :: ListNat -> ListNat
+tail Empty = undefined
+tail (Cons n ns) = ns
+
+-- Init --
+init :: ListNat -> ListNat
+init (Cons n Empty) = Empty
+init (Cons n ns) = Cons n (init ns)
+
+-- Last --
+last :: ListNat -> Nat
+last (Cons n Empty) = n
+last (Cons n ns) = last ns
