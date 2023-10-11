@@ -2,10 +2,7 @@ module Nat where
 
 import Prelude
   hiding ((+), (*), (^), (-), (<), (>), (++), quot, min, gcd, lcm, div, max, pred, rem,
-  length, elem, sum, product, reverse, enumFromTo, enumTo, take, drop, init, last, minimum, maximum)
-import Distribution.CabalSpecVersion (HasCommonStanzas(NoCommonStanzas))
-import Data.Sequence (ViewR(EmptyR))
-
+  length, elem, sum, product, reverse, enumFromTo, enumTo, take, drop, init, last, minimum, maximum, isPrefixOf)
 
 data Nat = O | S Nat
   deriving (Eq , Show)
@@ -204,7 +201,47 @@ elemIndices m (Cons n ns)
   | n == m    = Cons O (addNat (S O) (elemIndices m ns))
   | otherwise = addNat (S O) (elemIndices m ns)
 
+{-
+-- op --
+op :: 
+
+-- point wise Op --
+pointwise :: op -> List a -> List a -> List a
+pointwise op (Cons x xs) (Cons y ys) = Cons op xy pointwise xs ys
+
+-}
 -- pwAdd --
+pwAdd :: ListNat -> ListNat -> ListNat
+pwAdd _ Empty = Empty
+pwAdd (Cons n ns) (Cons m ms) = Cons (n + m) (pwAdd ns ms) 
+
+-- pwMult --
+pwMult :: ListNat -> ListNat -> ListNat
+pwMult _ Empty = Empty
+pwMult (Cons n ns) (Cons m ms) = Cons (n * m) (pwMult ns ms)
+
+{-
+-- Is Sorted --
+isSorted :: ListNat -> Bool
+isSorted Empty = True
+isSorted (Cons n ns) = leq n (minimum ns)
+  | n < m && isSorted ns = True
+  | otherwise = False
+-}
+
+-- Filter Even --
+filterEven :: ListNat -> ListNat
+filterEven Empty = Empty
+filterEven (Cons n ns)
+  | ev n = Cons n (filterEven ns)
+  | otherwise = filterEven ns
+
+-- Filter Odd --
+filterOdd :: ListNat -> ListNat
+filterOdd Empty = Empty
+filterOdd (Cons n ns)
+  | od n = Cons n (filterOdd ns)
+  | otherwise = filterOdd ns
 
 -- minimum --
 minimum :: ListNat -> Nat
@@ -216,6 +253,22 @@ maximum :: ListNat -> Nat
 maximum (Cons n Empty) = n
 maximum (Cons n ns) = max n (maximum ns)
 
+-- Is Prefix of --
+isPrefixOf :: ListNat -> ListNat -> Bool
+isPrefixOf Empty _ = True
+isPrefixOf (Cons n ns) (Cons m ms)
+  | n == m && isPrefixOf ns ms = True
+  | otherwise = False
+
+-- mix --
+mix :: ListNat -> ListNat -> ListNat
+mix (Cons n ns) (Cons m ms) = Cons n (Cons m (mix ns ms))
+mix _ _ = Empty
+
+-- Intersperse --
+intersperse :: Nat -> ListNat -> ListNat
+intersperse _ Empty = Empty
+intersperse n (Cons m ns) = Cons m (Cons n (intersperse n ns))
 
 -- Head --
 head :: ListNat -> Nat
