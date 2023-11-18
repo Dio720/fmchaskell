@@ -42,7 +42,7 @@ n ^ (S m) = (n ^ m) * n
 -- Menor que --
 (<) :: Nat -> Nat -> Bool
 O < m = True
-(S n) < O = False
+_ < O = False
 (S n) < (S m) = n < m
 
 -- Dobro --
@@ -84,13 +84,10 @@ quot (n, m) = fst (div (n, m))
 rem :: (Nat, Nat) -> Nat
 rem (n, m) = snd (div (n, m))
 
-{-
 -- MDC --
 gcd :: (Nat, Nat) -> Nat
-gcd (n, m)
-  | m == O    = n
-  | otherwise = gcd (m, rem (n, m))
--}
+gcd (n, 0) = n
+gcd (n, m) = gcd (m, rem (n, m))
 
 -- Even --
 ev :: Nat -> Bool
@@ -126,7 +123,7 @@ sum :: ListNat -> Nat
 sum Empty = O
 sum (Cons n ns) = n + sum ns
 
--- Product --
+-- Product --i
 product :: ListNat -> Nat
 product Empty = S O
 product (Cons n ns) = n * product ns
@@ -144,8 +141,7 @@ append n (Cons m ms) = Cons m (append n ms)
 -- Reverse --
 reverse :: ListNat -> ListNat
 reverse Empty = Empty
-reverse (Cons n ns) = reverse ns ++ Cons n Empty
-
+reverse (Cons n ns) = append n (reverse ns)
 
 -- All even --
 allEven :: ListNat -> Bool
@@ -201,33 +197,20 @@ elemIndices m (Cons n ns)
   | n == m    = Cons O (addNat (S O) (elemIndices m ns))
   | otherwise = addNat (S O) (elemIndices m ns)
 
-{-
--- op --
-op :: 
-
--- point wise Op --
-pointwise :: op -> List a -> List a -> List a
-pointwise op (Cons x xs) (Cons y ys) = Cons op xy pointwise xs ys
-
--}
 -- pwAdd --
 pwAdd :: ListNat -> ListNat -> ListNat
 pwAdd _ Empty = Empty
-pwAdd (Cons n ns) (Cons m ms) = Cons (n + m) (pwAdd ns ms) 
+pwAdd (Cons n ns) (Cons m ms) = Cons (n + m) (pwAdd ns ms)
 
 -- pwMult --
 pwMult :: ListNat -> ListNat -> ListNat
 pwMult _ Empty = Empty
 pwMult (Cons n ns) (Cons m ms) = Cons (n * m) (pwMult ns ms)
 
-{-
 -- Is Sorted --
 isSorted :: ListNat -> Bool
+isSorted (Cons n (Cons m ms)) = (n < m) && isSorted (Cons m ms)
 isSorted Empty = True
-isSorted (Cons n ns) = leq n (minimum ns)
-  | n < m && isSorted ns = True
-  | otherwise = False
--}
 
 -- Filter Even --
 filterEven :: ListNat -> ListNat
